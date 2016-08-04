@@ -5,10 +5,10 @@
 
 #define ASCII_LOWERCASE_A 97
 #define ASCII_LOWERCASE_Z 122
+#define MAX_MESSAGE_LENGTH 512
 
 
-int getCipherKey(void)
-{
+int getCipherKey(void) {
 	char inputCipherKey[4];
 	int cipherKey;
 	printf("Enter the cipher key you wish to use: \n");
@@ -21,8 +21,7 @@ int getCipherKey(void)
 	return cipherKey;
 }
 
-int validateMessage(char message[200])
-{
+int validateMessage(char message[MAX_MESSAGE_LENGTH - 1]) {
 	int i;
 	for (i = 0; i < strlen(message) - 1; i++) {
 		if (!(isalpha(message[i]) || message[i] == 32)) {
@@ -32,8 +31,7 @@ int validateMessage(char message[200])
 	return 1;
 }
 
-void getMessage(char message[200])
-{
+void getMessage(char message[MAX_MESSAGE_LENGTH - 1]) {
 	printf("Enter message: \n");
 	fgets(message, 200, stdin);
 	if (validateMessage(message) == 0) {
@@ -42,8 +40,7 @@ void getMessage(char message[200])
 	}
 }
 
-void encrypt(int cipherKey, char message[200], char encryptedMessage[201])
-{
+void encrypt(int cipherKey, char message[MAX_MESSAGE_LENGTH - 1], char encryptedMessage[MAX_MESSAGE_LENGTH]) {
 	int i, newLetter;
 
 	encryptedMessage[0] = 96 + cipherKey;
@@ -62,39 +59,18 @@ void encrypt(int cipherKey, char message[200], char encryptedMessage[201])
 	encryptedMessage[i + 1] = '\0';
 }
 
-void decrypt(char encrypted[201], int cipherKey, char decrypted[200]) 
-{
+void decrypt(char encrypted[MAX_MESSAGE_LENGTH], int cipherKey, char decrypted[MAX_MESSAGE_LENGTH - 1]) {
 	int i, newLetter;
 
 	for (i = 0; i < strlen(encrypted) - 1; i++) {
 		if (encrypted[i + 1] == 32) {
 			decrypted[i] = encrypted[i + 1];
 			continue;
-		}else {
+		} else {
 			newLetter = encrypted[i + 1] - cipherKey;
 			if (!islower(newLetter)) newLetter = (ASCII_LOWERCASE_Z + 1) - (ASCII_LOWERCASE_A - newLetter);
 			decrypted[i] = newLetter;
 		}
 	}
 	decrypted[i] = '\0';
-}
-
-int main(void) 
-{
-	char message[200], encryptedMessage[201], decryptedMessage[200];
-	int encryptCipherKey, decryptCipherKey;
-
-	encryptCipherKey = getCipherKey();
-	getMessage(message);
-	
-	encrypt(encryptCipherKey, message, encryptedMessage);
-	printf("encrypted: %s\n", encryptedMessage);
-
-	printf("To decrypt, continue\n");
-	decryptCipherKey = getCipherKey();
-	decrypt(encryptedMessage, decryptCipherKey, decryptedMessage);
-	printf("Decrypted Message: %s\n", decryptedMessage);
-
-	fgetc(stdin);
-	return 0;
 }
